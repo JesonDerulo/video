@@ -1,5 +1,6 @@
 from django.shortcuts import render
-import random
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .mixins import MemberRequiredMixin, StaffMemberRequiredMixin
 from django.views.generic import (
         CreateView,
         DetailView,
@@ -11,18 +12,16 @@ from django.views.generic import (
 from .models import Video
 from .forms import VideoForm
 # Create your views here.
-class VideoCreateView(CreateView):
+class VideoCreateView(StaffMemberRequiredMixin, CreateView):
     model = Video
     form_class = VideoForm
 
 
 
-class VideoDetailView(DetailView):
+class VideoDetailView(MemberRequiredMixin, DetailView):
     queryset = Video.objects.all()
 
-    def get_context_data(self, *args,**kwargs):
-        context = super(VideoDetailView, self).get_context_data(*args,**kwargs)
-        return context
+
 
 
 
@@ -40,10 +39,10 @@ class VideoListView(ListView):
 
 
 
-class VideoUpdateView(UpdateView):
+class VideoUpdateView(StaffMemberRequiredMixin, UpdateView):
     queryset = Video.objects.all()
     form_class = VideoForm
 
-class VideoDeleteView(DeleteView):
+class VideoDeleteView(StaffMemberRequiredMixin, DeleteView):
     queryset = Video.objects.all()
     success_url = "/videos/"
