@@ -13,12 +13,13 @@ from django.views.generic import (
 from videos.mixins import MemberRequiredMixin, StaffMemberRequiredMixin
 from .models import Course
 from .forms import CourseForm
+from django.http import Http404
 
 
 class CourseCreateView(StaffMemberRequiredMixin, CreateView):
     model = Course
     form_class = CourseForm
-    # success_url = "/success/"
+
 
     def form_valid(self, form):
         obj = form.save(commit=False)
@@ -30,6 +31,17 @@ class CourseCreateView(StaffMemberRequiredMixin, CreateView):
 
 class CourseDetailView(MemberRequiredMixin, DetailView):
     queryset = Course.objects.all()
+
+    def get_object(self):
+        slug = self.kwargs.get("slug")
+        obj = Course.objects.filter(slug=slug)
+        if obj.exists():
+            return obj.first()
+        raise Http404
+
+
+
+
 
 
 class CourseListView(ListView):
