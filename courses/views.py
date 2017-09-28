@@ -11,7 +11,7 @@ from django.views.generic import (
 
 
 from videos.mixins import MemberRequiredMixin, StaffMemberRequiredMixin
-from .models import Course
+from .models import Course,Lecture
 from .forms import CourseForm
 from django.http import Http404
 
@@ -41,6 +41,13 @@ class CourseDetailView(MemberRequiredMixin, DetailView):
         raise Http404
 
 
+
+class LectureDetailView(MemberRequiredMixin, DetailView):
+    def get_object(self):
+        course_slug = self.kwargs.get("cslug")
+        lecture_slug = self.kwargs.get('lslug')
+        obj = get_object_or_404(Lecture, course__slug=course_slug, slug=lecture_slug)
+        return obj
 
 
 

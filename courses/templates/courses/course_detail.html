@@ -15,6 +15,18 @@
             {{ object.embed_code|safe }}
             {{ object.updated }}
             {{ object.id }}
+    <p>
+        <ul>
+             {% for item in object.lecture_set.all %}
+                 <li><a href='{{ item.get_absolute_url }}'>{{ item.title }}</a></li>
+
+                 {% empty %}
+                 <li>No lectures found</li>
+             {% endfor %}
+        </ul>
+
+
+        </p>
     </div>
 </div>
 
