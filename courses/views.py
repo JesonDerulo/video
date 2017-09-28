@@ -16,6 +16,7 @@ from .forms import CourseForm
 from django.http import Http404
 
 
+
 class CourseCreateView(StaffMemberRequiredMixin, CreateView):
     model = Course
     form_class = CourseForm
@@ -60,6 +61,7 @@ class CourseListView(ListView):
     #     return context
 
 
+
 class CourseUpdateView(StaffMemberRequiredMixin, UpdateView):
     queryset = Course.objects.all()
     form_class = CourseForm
@@ -72,6 +74,21 @@ class CourseUpdateView(StaffMemberRequiredMixin, UpdateView):
         return super(CourseUpdateView, self).form_valid(form)
 
 
+    def get_object(self):
+        slug = self.kwargs.get("slug")
+        obj = Course.objects.filter(slug=slug)
+        if obj.exists():
+            return obj.first()
+        raise Http404
+
+
 class CourseDeleteView(StaffMemberRequiredMixin, DeleteView):
     queryset = Course.objects.all()
     success_url = '/videos/'
+
+    def get_object(self):
+        slug = self.kwargs.get("slug")
+        obj = Course.objects.filter(slug=slug)
+        if obj.exists():
+            return obj.first()
+        raise Http404
