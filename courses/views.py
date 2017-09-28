@@ -74,6 +74,8 @@ class CourseUpdateView(StaffMemberRequiredMixin, UpdateView):
         return super(CourseUpdateView, self).form_valid(form)
 
 
+
+
     def get_object(self):
         slug = self.kwargs.get("slug")
         obj = Course.objects.filter(slug=slug)
