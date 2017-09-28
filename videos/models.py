@@ -4,6 +4,7 @@ from django.db.models.signals import pre_save
 from django.utils.text  import slugify
 
 from courses.utils import create_slug
+
 # Create your models here.
 
 
@@ -30,3 +31,8 @@ def pre_save_video_receiver(sender, instance, *args, **kwargs):
 
 
 pre_save.connect(pre_save_video_receiver, sender=Video)
+
+
+
+
+
