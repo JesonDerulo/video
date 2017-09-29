@@ -7,6 +7,7 @@ class LectureAdminForm(forms.ModelForm):
     class Meta:
         model = Lecture
         fields = [
+            'order',
             'title',
             'video',
             'description',
