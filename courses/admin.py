@@ -1,9 +1,11 @@
 from django.contrib import admin
 from .models import Course, Lecture
+from .forms import LectureAdminForm
 
 # Register your models here.
 class LectureInLine(admin.TabularInline):
     model = Lecture
+    form = LectureAdminForm
     prepopulated_fields = {"slug": ("title",)}
     extra = 1
 
