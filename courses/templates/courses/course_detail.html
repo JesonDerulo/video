@@ -18,7 +18,7 @@
     <p>
         <ul>
              {% for item in object.lecture_set.all %}
-                 <li>{{ item.order }}<a href='{{ item.get_absolute_url }}'>{{ item.title }}</a></li>
+                 <li>{{ item.display_order }}<a href='{{ item.get_absolute_url }}'>{{ item.title }}</a></li>
 
                  {% empty %}
                  <li>No lectures found</li>

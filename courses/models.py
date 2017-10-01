@@ -50,6 +50,12 @@ class Lecture(models.Model):
         unique_together = (('slug', 'course'),)
         ordering = ['order', 'title']
 
+    @property
+    def display_order(self):
+        return self.order + 1
+
+
+
 
     def get_absolute_url(self):
         return reverse("courses:lecture-detail",
