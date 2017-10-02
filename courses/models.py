@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from .utils import create_slug, make_display_price
 from videos.models import Video
 from .fields import PositionField
+from django.db.models import Prefetch
 # Create your models here.
 class MyCourses(models.Model):
     user        = models.OneToOneField(settings.AUTH_USER_MODEL)
@@ -21,7 +22,7 @@ class MyCourses(models.Model):
         verbose_name_plural = "My courses"
 def post_save_user_create(sender, instance, created, *args, **kwargs):
     if created:
-        MyCourse.object.get_or_create(user=instance)
+        MyCourses.object.get_or_create(user=instance)
 
 post_save.connect(post_save_user_create, sender=settings.AUTH_USER_MODEL)
 
@@ -34,6 +35,27 @@ POS_CHOICES = (
     ('sec','Secondary'),
 )
 
+class CourseQuerySet(models.query.QuerySet):
+    def active(self):
+        return self.filter(active=True)
+
+    def owned(self, user):
+        return self.prefetch_related(
+                    Prefetch( 'owned',
+                              queryset=MyCourses.objects.filter(user=user),
+                              to_attr='is_owner',
+                    )
+            )
+
+class CourseManager(models.Manager):
+    def get_queryset(self):
+        return CourseQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset().all().active()
+
+
+
 class Course(models.Model):
     user            = models.ForeignKey(settings.AUTH_USER_MODEL)
     title           = models.CharField(max_length=120)
@@ -42,8 +64,11 @@ class Course(models.Model):
     category        = models.CharField(max_length=120, choices=POS_CHOICES, default='main')
     order           = PositionField(collection='category')
     price           = models.DecimalField(decimal_places=2, max_digits=100)
+    active          = models.BooleanField(default=True)
     updated         = models.DateTimeField(auto_now=True)
     timestamp       = models.DateTimeField(auto_now_add=True)
+
+    objects = CourseManager()
 
     def __str__(self):
         return self.title

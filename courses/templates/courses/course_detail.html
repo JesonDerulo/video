@@ -14,8 +14,9 @@
 
             <h1>{{ object.title }}</h1>
             {{ object.description|linebreaks }}
+            {% if not object.is_owner %}
             {{ object.display_price }}
-    <p>
+    <p>     {%  endif  %}
         <ul>
              {% for item in object.lecture_set.all %}
                  <li>{{ item.display_order }}<a href='{{ item.get_absolute_url }}'>{{ item.title }}</a></li>

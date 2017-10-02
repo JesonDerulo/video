@@ -32,11 +32,11 @@ class CourseCreateView(StaffMemberRequiredMixin, CreateView):
 
 
 class CourseDetailView(MemberRequiredMixin, DetailView):
-    queryset = Course.objects.all()
+    # queryset = Course.objects.all()
 
     def get_object(self):
         slug = self.kwargs.get("slug")
-        obj = Course.objects.filter(slug=slug)
+        obj = Course.objects.filter(slug=slug).owned(self.request.user)
         if obj.exists():
             return obj.first()
         raise Http404
@@ -63,19 +63,11 @@ class CourseListView(ListView):
             qs = qs.filter(title__icontains=query)
 
         if user.is_authenticated():
-            qs = qs.prefetch_related(
-                    Prefetch('owned',
-                            queryset=MyCourses.objects.filter(user=user),
-                            to_attr='is_owner',
-                )
-            )
-        return qs  #.filter(title__icontains='vid') #.filter(user=self.request.user)
+            qs = qs.owned(user)
 
-    # def get_context_data(self, *args, **kwargs):
-    #     context = super(VideoListView, self).get_context_data(*args, **kwargs)
-    #     context['random_number'] = random.randint(100, 10000)
-    #     print(context)
-    #     return context
+        return qs
+
+
 
 
 
