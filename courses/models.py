@@ -7,6 +7,28 @@ from .utils import create_slug, make_display_price
 from videos.models import Video
 from .fields import PositionField
 # Create your models here.
+class MyCourses(models.Model):
+    user        = models.OneToOneField(settings.AUTH_USER_MODEL)
+    courses     = models.ManyToManyField('Course', blank=True)
+    updated     = models.DateTimeField(auto_now=True)
+    timestamp   = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.courses.all().count())
+
+    class Meta:
+        verbose_name = "My Courses"
+        verbose_name_plural = "My courses"
+def post_save_user_create(sender, instance, created, *args, **kwargs):
+    if created:
+        MyCourse.object.get_or_create(user=instance)
+
+post_save.connect(post_save_user_create, sender=settings.AUTH_USER_MODEL)
+
+
+
+
+
 POS_CHOICES = (
     ('main', 'Main'),
     ('sec','Secondary'),
@@ -75,3 +97,4 @@ def pre_save_video_receiver(sender, instance, *args, **kwargs):
         instance.slug = create_slug(instance)
 
 pre_save.connect(pre_save_video_receiver, sender=Course)
+
