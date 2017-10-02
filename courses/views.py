@@ -11,9 +11,10 @@ from django.views.generic import (
 
 
 from videos.mixins import MemberRequiredMixin, StaffMemberRequiredMixin
-from .models import Course,Lecture
+from .models import Course, Lecture, MyCourses
 from .forms import CourseForm
 from django.http import Http404
+from django.db.models import Prefetch
 
 
 
@@ -57,8 +58,17 @@ class CourseListView(ListView):
         request = self.request
         qs = Course.objects.all()
         query = request.GET.get('q')
+        user  = self.request.user
         if query:
             qs = qs.filter(title__icontains=query)
+
+        if user.is_authenticated():
+            qs = qs.prefetch_related(
+                    Prefetch('owned',
+                            queryset=MyCourses.objects.filter(user=user),
+                            to_attr='is_owner',
+                )
+            )
         return qs  #.filter(title__icontains='vid') #.filter(user=self.request.user)
 
     # def get_context_data(self, *args, **kwargs):

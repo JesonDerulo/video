@@ -17,7 +17,7 @@
             <ul>
         {% for item in object_list %}
             <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a><small>{{ item.lecture_set.count }} lectures</small> |
-                {% if item in request.user.mycourses.courses.all %}
+                {% if item.is_owner %}
                 Owned
                 {% else %}
                 {{ item.display_price }}

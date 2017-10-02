@@ -9,7 +9,7 @@ from .fields import PositionField
 # Create your models here.
 class MyCourses(models.Model):
     user        = models.OneToOneField(settings.AUTH_USER_MODEL)
-    courses     = models.ManyToManyField('Course', blank=True)
+    courses     = models.ManyToManyField('Course',related_name='owned', blank=True)
     updated     = models.DateTimeField(auto_now=True)
     timestamp   = models.DateTimeField(auto_now_add=True)
 
