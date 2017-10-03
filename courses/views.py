@@ -6,7 +6,8 @@ from django.views.generic import (
         DetailView,
         ListView,
         UpdateView,
-        DeleteView
+        DeleteView,
+        RedirectView,
     )
 
 
@@ -36,10 +37,27 @@ class CourseDetailView(MemberRequiredMixin, DetailView):
 
     def get_object(self):
         slug = self.kwargs.get("slug")
-        obj = Course.objects.filter(slug=slug).owned(self.request.user)
-        if obj.exists():
-            return obj.first()
+        qs = Course.objects.filter(slug=slug).owned(self.request.user)
+        if qs.exists():
+            return qs.first()
         raise Http404
+
+
+class CoursePurchaseView(LoginRequiredMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, slug=None):
+        qs = Course.objects.filter(slug=slug).owned(self.request.user)
+        if qs.exists():
+            user = self.request.user
+            if user.is_authenticated():
+                my_courses = user.mycourses
+                # run transaction
+                # if transaction successful:
+                my_courses.courses.add(qs.first())
+                return qs.first().get_absolute_url()
+            return qs.first().get_absolute_url()
+        return "/courses/"
 
 
 

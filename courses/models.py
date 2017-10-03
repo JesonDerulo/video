@@ -77,6 +77,9 @@ class Course(models.Model):
     def get_absolute_url(self):
         return reverse("courses:detail", kwargs={"slug": self.slug})
 
+    def get_purchase_url(self):
+        return reverse("courses:purchase", kwargs={"slug":self.slug})
+
     def display_price(self):
         return make_display_price(self.price)
 
