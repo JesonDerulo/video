@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^admin/', admin.site.urls),
     url(r'^courses/', include('courses.urls', namespace='courses')),
+    url(r'^categories/', include('categories.urls', namespace='categories')),
     url(r'^videos/', include('videos.urls', namespace='videos')),
 ]
 
