@@ -19,7 +19,7 @@ class CategoryManager(models.Manager):
 class Category(models.Model):
     title       = models.CharField(max_length=120)
     slug        = models.SlugField(blank=True)
-    order       = PositionField(collection='category', blank=True)
+    order       = PositionField(blank=True)
     description = models.TextField()
     active      = models.BooleanField(default=True)
     updated     = models.DateTimeField(auto_now=True)
@@ -29,7 +29,7 @@ class Category(models.Model):
     objects = CategoryManager()
 
     def get_absolute_url(self):
-        return reverse("category:detail", kwargs={"slug":self.slug})
+        return reverse("categories:detail", kwargs={"slug":self.slug})
 
     def __str__(self):
         return self.title
