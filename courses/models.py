@@ -64,6 +64,7 @@ class Course(models.Model):
     description     = models.TextField()
     # category        = models.CharField(max_length=120, choices=POS_CHOICES, default='main')
     category        = models.ForeignKey(Category, related_name='primary_category', null=True, blank=True)
+    secondary       = models.ManyToManyField(Category, related_name='secondary_category', blank=True)
     order           = PositionField(collection='category')
     price           = models.DecimalField(decimal_places=2, max_digits=100)
     active          = models.BooleanField(default=True)

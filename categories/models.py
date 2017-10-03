@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 # Create your models here.
 from courses.fields import PositionField
 from courses.utils import create_slug
+from django.db.models import Count
 
 class CategoryQueryset(models.query.QuerySet):
     def active(self):
@@ -14,7 +15,10 @@ class CategoryManager(models.Manager):
         return CategoryQueryset(self.model, using=self._db)
 
     def all(self):
-        return self.get_queryset().all().active().prefetch_related('primary_category')
+        return self.get_queryset().all(
+        ).active().annotate(
+            courses_length=Count('primary_category') + Count("secondary_category")
+        ).prefetch_related('primary_category', 'secondary_category')
 
 class Category(models.Model):
     title       = models.CharField(max_length=120)
