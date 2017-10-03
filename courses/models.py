@@ -7,6 +7,7 @@ from .utils import create_slug, make_display_price
 from videos.models import Video
 from .fields import PositionField
 from django.db.models import Prefetch
+from categories.models import Category
 # Create your models here.
 class MyCourses(models.Model):
     user        = models.OneToOneField(settings.AUTH_USER_MODEL)
@@ -61,7 +62,8 @@ class Course(models.Model):
     title           = models.CharField(max_length=120)
     slug            = models.SlugField(blank=True)
     description     = models.TextField()
-    category        = models.CharField(max_length=120, choices=POS_CHOICES, default='main')
+    # category        = models.CharField(max_length=120, choices=POS_CHOICES, default='main')
+    category        = models.ForeignKey(Category, related_name='primary_category', null=True, blank=True)
     order           = PositionField(collection='category')
     price           = models.DecimalField(decimal_places=2, max_digits=100)
     active          = models.BooleanField(default=True)
