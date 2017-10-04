@@ -10,7 +10,9 @@
 <div class="row">
     <div class="col-sm-6 col-sm-offset-3">
             {% include 'videos/snippets/video-search-form.html' with request=request %}
-            <h1>Hi</h1>
+            {% if object.image %}
+            <img src="{{ object.image.url }}" class="img-responsive">
+            {% endif %}
 
             <h1>{{ object.title }}</h1>
             {{ object.description|linebreaks }}
