@@ -4,8 +4,23 @@ from django.db.models.signals import pre_save
 from django.utils.text  import slugify
 
 from courses.utils import create_slug
+from django.db.models import Q
 
 # Create your models here.
+class VideoQuerySet(models.query.QuerySet):
+    def active(self):
+        return self.filter(active=True)
+
+    def unused(self):
+        return self.filter(Q(lecture__isnull=True)&Q(category__isnull=True))
+
+class VideoManager(models.Manager):
+    def get_queryset(self):
+        return VideoQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset().all()
+
 
 
 class Video(models.Model):
@@ -16,6 +31,8 @@ class Video(models.Model):
     member_required = models.BooleanField(default=False)
     updated    = models.DateTimeField(auto_now=True)
     timestamp  = models.DateTimeField(auto_now_add=True)
+
+    objects = VideoManager()
 
     def __str__(self):
         return self.title

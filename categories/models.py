@@ -5,6 +5,8 @@ from django.core.urlresolvers import reverse
 from courses.fields import PositionField
 from courses.utils import create_slug
 from django.db.models import Count
+from videos.models import Video
+
 
 class CategoryQueryset(models.query.QuerySet):
     def active(self):
@@ -22,6 +24,7 @@ class CategoryManager(models.Manager):
 
 class Category(models.Model):
     title       = models.CharField(max_length=120)
+    video       = models.ForeignKey(Video, null=True, blank=True)
     slug        = models.SlugField(blank=True)
     order       = PositionField(blank=True)
     description = models.TextField()
