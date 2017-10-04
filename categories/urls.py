@@ -2,11 +2,11 @@ from django.conf.urls import url
 
 from .views import (
     CategoryListView,
-    CategotyDetailView,
+    CategoryDetailView,
 )
 
 urlpatterns = [
     url(r'^$', CategoryListView.as_view(), name='list'),
-    url(r'^(?P<slug>[\w-]+)/$', CategotyDetailView.as_view(), name='detail'),
+    url(r'^(?P<slug>[\w-]+)/$', CategoryDetailView.as_view(), name='detail'),
 
 ]
