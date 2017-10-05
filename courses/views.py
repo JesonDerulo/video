@@ -63,6 +63,7 @@ class LectureDetailView(View):
     def get(self, request, cslug=None, lslug=None, *args, **kwargs):
         obj = None
         qs = Course.objects.filter(slug=cslug).lectures().owned(request.user)
+
         if not qs.exists():
             raise Http404
         course_ = qs.first()
@@ -75,6 +76,7 @@ class LectureDetailView(View):
             "object": obj,
             "course": course_,
         }
+        print(obj.order)
 
         if not course_.is_owner and not obj.free:  # and not user.is_member:
             return render(request, "courses/must_purchase.html", {"object": course_})
