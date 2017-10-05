@@ -59,26 +59,27 @@ class CoursePurchaseView(LoginRequiredMixin, RedirectView):
         return "/courses/"
 
 
-
 class LectureDetailView(View):
     def get(self, request, cslug=None, lslug=None, *args, **kwargs):
         obj = None
-        qs  = Course.objects.filter(slug=cslug).lectures().owned(request.user)
+        qs = Course.objects.filter(slug=cslug).lectures().owned(request.user)
         if not qs.exists():
             raise Http404
-
         course_ = qs.first()
-        if not course_.is_owner:
-            return render(request, 'courses/must_purchase.html', {'object': course_})
+        lectures_qs = course_.lecture_set.filter(slug=lslug)
+        if not lectures_qs.exists():
+            raise Http404
 
-        lecture_qs = course_.lecture_set.filter(slug=lslug)
-        if lecture_qs.exists():
-            obj = lecture_qs.first()
+        obj = lectures_qs.first()
         context = {
             "object": obj,
+            "course": course_,
         }
-        return render(request, "courses/lecture_detail.html", context)
 
+        if not course_.is_owner and not obj.free:  # and not user.is_member:
+            return render(request, "courses/must_purchase.html", {"object": course_})
+
+        return render(request, "courses/lecture_detail.html", context)
 
 
 

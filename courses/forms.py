@@ -13,6 +13,7 @@ class LectureAdminForm(forms.ModelForm):
             'video',
             'description',
             'slug',
+            'free',
         ]
 
     def __init__(self, *args, **kwargs):
