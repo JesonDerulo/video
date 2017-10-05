@@ -32,7 +32,7 @@ class CourseCreateView(StaffMemberRequiredMixin, CreateView):
     
 
 
-class CourseDetailView(MemberRequiredMixin, DetailView):
+class CourseDetailView(DetailView):
     # queryset = Course.objects.all()
 
     def get_object(self):
