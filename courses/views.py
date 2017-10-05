@@ -8,6 +8,7 @@ from django.views.generic import (
         UpdateView,
         DeleteView,
         RedirectView,
+        View,
     )
 
 
@@ -37,7 +38,7 @@ class CourseDetailView(DetailView):
 
     def get_object(self):
         slug = self.kwargs.get("slug")
-        qs = Course.objects.filter(slug=slug).owned(self.request.user)
+        qs = Course.objects.filter(slug=slug).lectures().owned(self.request.user)
         if qs.exists():
             return qs.first()
         raise Http404
@@ -52,8 +53,6 @@ class CoursePurchaseView(LoginRequiredMixin, RedirectView):
             user = self.request.user
             if user.is_authenticated():
                 my_courses = user.mycourses
-                # run transaction
-                # if transaction successful:
                 my_courses.courses.add(qs.first())
                 return qs.first().get_absolute_url()
             return qs.first().get_absolute_url()
@@ -61,12 +60,27 @@ class CoursePurchaseView(LoginRequiredMixin, RedirectView):
 
 
 
-class LectureDetailView(MemberRequiredMixin, DetailView):
-    def get_object(self):
-        course_slug = self.kwargs.get("cslug")
-        lecture_slug = self.kwargs.get('lslug')
-        obj = get_object_or_404(Lecture, course__slug=course_slug, slug=lecture_slug)
-        return obj
+class LectureDetailView(View):
+    def get(self, request, cslug=None, lslug=None, *args, **kwargs):
+        obj = None
+        qs  = Course.objects.filter(slug=cslug).lectures().owned(request.user)
+        if not qs.exists():
+            raise Http404
+
+        course_ = qs.first()
+        if not course_.is_owner:
+            return render(request, 'courses/must_purchase.html', {'object': course_})
+
+        lecture_qs = course_.lecture_set.filter(slug=lslug)
+        if lecture_qs.exists():
+            obj = lecture_qs.first()
+        context = {
+            "object": obj,
+        }
+        return render(request, "courses/lecture_detail.html", context)
+
+
+
 
 
 
