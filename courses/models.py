@@ -103,6 +103,13 @@ class Course(models.Model):
         return make_display_price(self.price)
 
 
+def post_save_course_receiver(sender, instance, created, *args, **kwargs):
+    if not instance.category in instance.secondary.all():
+        instance.secondary.add(instance.category)
+
+post_save.connect(post_save_course_receiver, sender=Course)
+
+
 
 
 class Lecture(models.Model):
