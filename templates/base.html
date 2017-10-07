@@ -1,3 +1,4 @@
+{% load search_form %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,9 +11,12 @@
     {% include 'defaults/head.html' %}
   </head>
   <body>
-    <div class="container-fluid">
-    {% block content %}
-    {% endblock content %}
+    <div class='container'>
+    {% search_form request %}
+    </div>
+    <div class='container-fluid'>
+      {% block content %}
+      {% endblock content %}
     </div>
 
    {% include 'defaults/scripts.html' %}
